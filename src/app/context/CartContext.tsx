@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import { Product } from "../../../types/product";
+import { useAuth } from "../../../hooks/useAuth";
 
 interface CartItem extends Product {
   quantity: number;
@@ -20,6 +21,8 @@ interface CartContextType {
 const CartContext = createContext<CartContextType | null>(null);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
+  const { currentUser } = useAuth();
+  const CART_KEY = `cart-${currentUser?.email}`;
   const [cart, setCart] = useState<CartItem[]>([]);
   const [totalItems, setTotalItems] = useState(0);
   const [totalPrice, setTotalPrice] = useState(0);
@@ -27,7 +30,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const storedCart = localStorage.getItem("cart");
     if (storedCart) setCart(JSON.parse(storedCart));
-  }, []);
+  }, [CART_KEY]);
 
   useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(cart));
@@ -36,7 +39,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
     setTotalItems(totalQty);
     setTotalPrice(totalHarga);
-  }, [cart]);
+  }, [cart, CART_KEY]);
 
   const addToCart = (product: Product) => {
     setCart((prev) => {

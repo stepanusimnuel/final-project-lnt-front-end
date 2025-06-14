@@ -2,14 +2,15 @@
 
 import { useEffect, useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
-import { isLoggedIn } from "../../utils/forms/validator";
 import { useRouter } from "next/navigation";
 import { useProductContext } from "./context/ProductContext";
 import Link from "next/link";
 import CartButton from "../../components/buttons/CartButton";
+import { useCartContext } from "./context/CartContext";
 
 export default function Dashboard() {
   const { currentUser, logout } = useAuth();
+  const { addToCart } = useCartContext();
   const router = useRouter();
 
   const { products, checking } = useProductContext();
@@ -36,8 +37,6 @@ export default function Dashboard() {
       (selectedTags.length === 0 || selectedTags.every((tag) => product.tags?.includes(tag)))
   );
 
-  console.log(filteredProducts);
-
   const sortedProducts = [...filteredProducts].sort((a, b) => {
     switch (sortBy) {
       case "rating":
@@ -57,10 +56,6 @@ export default function Dashboard() {
     }
   });
 
-  useEffect(() => {
-    if (!isLoggedIn()) router.push("/login");
-  }, []);
-
   const getDiscountPrice = (price: number, disc: number): number => {
     const res: number = price - (disc * price) / 100;
     return Number(res.toFixed(2));
@@ -78,13 +73,13 @@ export default function Dashboard() {
   if (checking) return <h2 className="text-center mt-10 text-gray-500">Loading...</h2>;
 
   return (
-    <div className="min-h-screen p-6 bg-gray-100">
-      <div className="flex justify-between items-center mb-8">
-        <div className="flex gap-4 items-center">
+    <div className="min-h-screen p-6 bg-gray-100 pt-24 relative">
+      <div className="flex justify-between items-center px-6 py-4 fixed top-0 left-0 right-0 z-50 bg-white shadow">
+        <div className="flex gap-4 items-center relative">
           <h1 className="text-3xl font-bold">Halo, {currentUser?.name}</h1>
           <CartButton />
         </div>
-        <button onClick={logout} className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition">
+        <button onClick={logout} className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition relative">
           Logout
         </button>
       </div>
@@ -165,7 +160,9 @@ export default function Dashboard() {
                 </div>
               </div>
             </Link>
-            <div className="w-full py-2 text-white text-sm text-center bg-blue-600 rounded-b transition hover:bg-blue-700">+ Keranjang</div>
+            <button onClick={() => addToCart(product)} className="bg-blue-600 text-white text-xs text-center w-full py-2 rounded-b hover:bg-blue-700 cursor-pointer transition">
+              + Keranjang
+            </button>
           </div>
         ))}
       </div>

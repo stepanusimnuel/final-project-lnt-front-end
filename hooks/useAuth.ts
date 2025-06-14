@@ -11,7 +11,6 @@ export function useAuth({
   redirectTo?: string;
 } = {}) {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
@@ -22,8 +21,6 @@ export function useAuth({
     if (!user && redirectTo) {
       router.push(redirectTo);
     }
-
-    setLoading(false);
   }, [redirectIfFound, redirectTo, router]);
 
   function register(name: string, email: string, password: string, phone_number: string, date_of_birth: string) {
