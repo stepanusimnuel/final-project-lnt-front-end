@@ -4,6 +4,7 @@ import { useParams } from "next/navigation";
 import Image from "next/image";
 import { useProductContext } from "@/app/context/ProductContext";
 import { useState } from "react";
+import ReviewComment from "../../../../components/product/ReviewComment";
 
 export default function ProductDetail() {
   const { id } = useParams();
@@ -22,7 +23,7 @@ export default function ProductDetail() {
   const prevImage = () => setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
 
   return (
-    <div className="max-w-5xl mx-auto mt-10 p-6 bg-white rounded-lg shadow-xl">
+    <div className="max-w-5xl mx-auto my-10 p-6 bg-white rounded-lg shadow-xl">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="relative w-full h-64 md:h-80 bg-gray-100 rounded overflow-hidden flex items-center justify-center">
           {images.length > 0 && <Image src={images[currentIndex]} alt={`Image ${product.title} ${currentIndex + 1}`} fill className="object-contain rounded" />}
@@ -72,6 +73,12 @@ export default function ProductDetail() {
           <p className="text-sm text-gray-600 mt-1">{product.weight} kg</p>
           <p className="text-sm text-gray-600 mt-2">⭐ Rating: {product.rating}</p>
         </div>
+      </div>
+
+      <div className="mt-10">
+        <h2 className="text-2xl font-semibold mb-4">Ulasan Pengguna</h2>
+
+        {product.reviews.length > 0 ? product.reviews.map((review, i) => <ReviewComment review={review} key={i} />) : <p className="text-gray-500">Belum ada ulasan untuk produk ini.</p>}
       </div>
     </div>
   );

@@ -17,7 +17,7 @@ export interface Product {
     width: number;
     depth: number;
   };
-  review: Review;
+  reviews: Array<Review>;
   thumbnail: string;
   images: string;
 }

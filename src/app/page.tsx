@@ -24,6 +24,8 @@ export default function Dashboard() {
 
   const [toSearch, setToSearch] = useState("");
 
+  const [sortBy, setSortBy] = useState("");
+
   const filteredProducts = products.filter(
     (product) =>
       (!selectedBrand || product.brand === selectedBrand) &&
@@ -32,6 +34,27 @@ export default function Dashboard() {
       product.title?.toLowerCase().includes(toSearch.toLowerCase()) &&
       (selectedTags.length === 0 || selectedTags.every((tag) => product.tags?.includes(tag)))
   );
+
+  console.log(filteredProducts);
+
+  const sortedProducts = [...filteredProducts].sort((a, b) => {
+    switch (sortBy) {
+      case "rating":
+        return b.rating - a.rating;
+      case "discount":
+        return b.discountPercentage - a.discountPercentage;
+      case "price-high":
+        return b.price - a.price;
+      case "price-low":
+        return a.price - b.price;
+      case "stock":
+        return b.stock - a.stock;
+      case "reviews":
+        return b.reviews.length - a.reviews.length;
+      default:
+        return 0;
+    }
+  });
 
   useEffect(() => {
     if (!isLoggedIn()) router.push("/login");
@@ -100,7 +123,16 @@ export default function Dashboard() {
           </select>
         </div>
 
-        <div className="w-full sm:w-auto">
+        <div className="w-full flex gap-2 sm:w-auto">
+          <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className="p-2 px-4 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300">
+            <option value="">Urutkan</option>
+            <option value="rating">Rating Tertinggi</option>
+            <option value="discount">Diskon Terbesar</option>
+            <option value="price-high">Harga Tertinggi</option>
+            <option value="price-low">Harga Terendah</option>
+            <option value="stock">Stok Terbanyak</option>
+            <option value="reviews">Ulasan Terbanyak</option>
+          </select>
           <input
             type="text"
             placeholder="🔍 Cari produk..."
@@ -112,7 +144,7 @@ export default function Dashboard() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mx-6">
-        {filteredProducts.map((product) => (
+        {sortedProducts.map((product) => (
           <Link key={product.id} href={`/product/${product.id}`}>
             <div className="bg-white rounded shadow hover:shadow-md transition min-h-[400px]">
               <img src={product.thumbnail} alt={product.title} className="w-full h-40 object-cover rounded mb-3" />
