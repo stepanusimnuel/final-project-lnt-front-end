@@ -11,6 +11,7 @@ export function useAuth({
   redirectTo?: string;
 } = {}) {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [checkingAuth, setCheckingAuth] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
@@ -18,9 +19,7 @@ export function useAuth({
     const user = stored ? JSON.parse(stored) : null;
     setCurrentUser(user);
 
-    if (!user && redirectTo) {
-      router.push(redirectTo);
-    }
+    setCheckingAuth(false);
   }, [redirectIfFound, redirectTo, router]);
 
   function register(name: string, email: string, password: string, phone_number: string, date_of_birth: string) {
@@ -59,5 +58,5 @@ export function useAuth({
     router.push("/login");
   }
 
-  return { currentUser, register, login, logout };
+  return { currentUser, register, login, logout, checkingAuth };
 }

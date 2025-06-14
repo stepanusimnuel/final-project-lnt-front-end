@@ -2,15 +2,15 @@
 
 import { useEffect, useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
-import { useRouter } from "next/navigation";
 import { useProductContext } from "./context/ProductContext";
 import Link from "next/link";
 import CartButton from "../../components/buttons/CartButton";
 import { useCartContext } from "./context/CartContext";
+import { useRouter } from "next/navigation";
 
 export default function Dashboard() {
-  const { currentUser, logout } = useAuth();
   const { addToCart } = useCartContext();
+  const { currentUser, checkingAuth, logout } = useAuth();
   const router = useRouter();
 
   const { products, checking } = useProductContext();
@@ -27,6 +27,16 @@ export default function Dashboard() {
   const [toSearch, setToSearch] = useState("");
 
   const [sortBy, setSortBy] = useState("");
+
+  useEffect(() => {
+    if (!checkingAuth && !currentUser) {
+      router.replace("/login");
+    }
+  }, [checkingAuth, currentUser]);
+
+  if (checkingAuth || !currentUser) {
+    return <div className="text-center mt-20">Loading...</div>;
+  }
 
   const filteredProducts = products.filter(
     (product) =>

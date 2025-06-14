@@ -4,14 +4,23 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useAuth } from "../../hooks/useAuth";
-import RedirectAuth from "../auth/RedirectAuth";
 
 export default function LoginForm() {
-  const { login } = useAuth();
+  const { currentUser, checkingAuth, login } = useAuth();
   const router = useRouter();
 
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (!checkingAuth && currentUser) {
+      router.replace("/"); // Atau ke halaman dashboard
+    }
+  }, [checkingAuth, currentUser]);
+
+  if (checkingAuth || currentUser) {
+    return <div className="text-center mt-20">Loading...</div>;
+  }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -29,35 +38,33 @@ export default function LoginForm() {
   };
 
   return (
-    <RedirectAuth>
-      <form onSubmit={handleSubmit} className="max-w-md mx-auto mt-12 bg-white p-6 rounded-lg shadow space-y-5">
-        <h2 className="text-2xl font-semibold text-center text-blue-600">Masuk</h2>
+    <form onSubmit={handleSubmit} className="max-w-md mx-auto mt-12 bg-white p-6 rounded-lg shadow space-y-5">
+      <h2 className="text-2xl font-semibold text-center text-blue-600">Masuk</h2>
 
-        {error && <p className="text-red-600 text-sm text-center">{error}</p>}
+      {error && <p className="text-red-600 text-sm text-center">{error}</p>}
 
-        <div>
-          <label className="block mb-1 font-medium">Email</label>
-          <input type="email" name="email" value={form.email} onChange={handleChange} className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-sky-300" />
-        </div>
+      <div>
+        <label className="block mb-1 font-medium">Email</label>
+        <input type="email" name="email" value={form.email} onChange={handleChange} className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-sky-300" />
+      </div>
 
-        <div>
-          <label className="block mb-1 font-medium">Password</label>
-          <input type="password" name="password" value={form.password} onChange={handleChange} className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-sky-300" />
-        </div>
+      <div>
+        <label className="block mb-1 font-medium">Password</label>
+        <input type="password" name="password" value={form.password} onChange={handleChange} className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-sky-300" />
+      </div>
 
-        <div>
-          <p className="text-sm text-center text-gray-600">
-            Belum punya akun?{" "}
-            <Link href="/register" className="text-blue-600 hover:underline">
-              Daftar di sini
-            </Link>
-          </p>
-        </div>
+      <div>
+        <p className="text-sm text-center text-gray-600">
+          Belum punya akun?{" "}
+          <Link href="/register" className="text-blue-600 hover:underline">
+            Daftar di sini
+          </Link>
+        </p>
+      </div>
 
-        <button type="submit" className="w-full bg-sky-600 text-white py-2 rounded hover:bg-sky-700 transition">
-          Masuk
-        </button>
-      </form>
-    </RedirectAuth>
+      <button type="submit" className="w-full bg-sky-600 text-white py-2 rounded hover:bg-sky-700 transition">
+        Masuk
+      </button>
+    </form>
   );
 }

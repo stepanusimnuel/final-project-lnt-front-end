@@ -1,15 +1,14 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { validateEmail, validatePassword, validatePhoneNumber } from "../../utils/forms/validator";
 import Link from "next/link";
 import { useAuth } from "../../hooks/useAuth";
-import RedirectAuth from "../auth/RedirectAuth";
 
 export default function RegisterForm() {
+  const { currentUser, checkingAuth, register } = useAuth();
   const router = useRouter();
-  const { register } = useAuth();
 
   const [form, setForm] = useState({
     name: "",
@@ -19,6 +18,16 @@ export default function RegisterForm() {
     date_of_birth: "",
   });
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (!checkingAuth && currentUser) {
+      router.replace("/"); // Atau ke halaman dashboard
+    }
+  }, [checkingAuth, currentUser]);
+
+  if (checkingAuth || currentUser) {
+    return <div className="text-center mt-20">Loading...</div>;
+  }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -43,50 +52,48 @@ export default function RegisterForm() {
     router.push("/login");
   };
   return (
-    <RedirectAuth>
-      <form onSubmit={handleSubmit} className="max-w-md mx-auto mt-12 bg-white p-6 rounded-lg shadow space-y-5">
-        <h2 className="text-3xl font-semibold text-center text-sky-600">Daftar Akun</h2>
+    <form onSubmit={handleSubmit} className="max-w-md mx-auto mt-12 bg-white p-6 rounded-lg shadow space-y-5">
+      <h2 className="text-3xl font-semibold text-center text-sky-600">Daftar Akun</h2>
 
-        {error && <p className="text-red-600 text-sm text-center">{error}</p>}
+      {error && <p className="text-red-600 text-sm text-center">{error}</p>}
 
-        <div>
-          <label className="block mb-1 font-medium">Nama Lengkap</label>
-          <input type="text" name="name" value={form.name} onChange={handleChange} className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-sky-300" />
-        </div>
+      <div>
+        <label className="block mb-1 font-medium">Nama Lengkap</label>
+        <input type="text" name="name" value={form.name} onChange={handleChange} className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-sky-300" />
+      </div>
 
-        <div>
-          <label className="block mb-1 font-medium">Email</label>
-          <input type="email" name="email" value={form.email} onChange={handleChange} className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-sky-300" />
-        </div>
+      <div>
+        <label className="block mb-1 font-medium">Email</label>
+        <input type="email" name="email" value={form.email} onChange={handleChange} className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-sky-300" />
+      </div>
 
-        <div>
-          <label className="block mb-1 font-medium">Password</label>
-          <input type="password" name="password" value={form.password} onChange={handleChange} className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-sky-300" />
-        </div>
+      <div>
+        <label className="block mb-1 font-medium">Password</label>
+        <input type="password" name="password" value={form.password} onChange={handleChange} className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-sky-300" />
+      </div>
 
-        <div>
-          <label className="block mb-1 font-medium">Nomor Telepon</label>
-          <input type="tel" name="phone_number" value={form.phone_number} onChange={handleChange} className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-sky-300" />
-        </div>
+      <div>
+        <label className="block mb-1 font-medium">Nomor Telepon</label>
+        <input type="tel" name="phone_number" value={form.phone_number} onChange={handleChange} className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-sky-300" />
+      </div>
 
-        <div>
-          <label className="block mb-1 font-medium">Tanggal Lahir</label>
-          <input type="date" name="date_of_birth" value={form.date_of_birth} onChange={handleChange} className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-sky-300" />
-        </div>
+      <div>
+        <label className="block mb-1 font-medium">Tanggal Lahir</label>
+        <input type="date" name="date_of_birth" value={form.date_of_birth} onChange={handleChange} className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-sky-300" />
+      </div>
 
-        <div>
-          <p className="text-sm text-center text-gray-600">
-            Sudah punya akun?{" "}
-            <Link href="/login" className="text-blue-600 hover:underline">
-              Masuk di sini
-            </Link>
-          </p>
-        </div>
+      <div>
+        <p className="text-sm text-center text-gray-600">
+          Sudah punya akun?{" "}
+          <Link href="/login" className="text-blue-600 hover:underline">
+            Masuk di sini
+          </Link>
+        </p>
+      </div>
 
-        <button type="submit" className="w-full bg-sky-600 text-white py-2 rounded hover:bg-sky-700 transition cursor-pointer">
-          Daftar
-        </button>
-      </form>
-    </RedirectAuth>
+      <button type="submit" className="w-full bg-sky-600 text-white py-2 rounded hover:bg-sky-700 transition cursor-pointer">
+        Daftar
+      </button>
+    </form>
   );
 }
