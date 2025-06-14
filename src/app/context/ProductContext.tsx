@@ -19,19 +19,26 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
   const [checking, setChecking] = useState(true);
 
   useEffect(() => {
-    const load = () => {
+    const load = async () => {
       const cached = localStorage.getItem("products");
-      if (cached) setProducts(JSON.parse(cached));
-      setChecking(false);
-    };
 
-    load();
+      if (cached) {
+        setProducts(JSON.parse(cached));
+        setChecking(false);
+      } else {
+        const res = await axios.get("https://dummyjson.com/products");
+        localStorage.setItem("products", JSON.stringify(res.data.products));
+        setProducts(res.data.products);
+        setChecking(false);
+      }
+    };
 
     const handleRefresh = () => {
       const updated = localStorage.getItem("products");
       if (updated) setProducts(JSON.parse(updated));
     };
 
+    load();
     window.addEventListener("refresh-products", handleRefresh);
 
     return () => window.removeEventListener("refresh-products", handleRefresh);
