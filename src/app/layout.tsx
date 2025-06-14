@@ -1,4 +1,5 @@
 import "./globals.css";
+import { ProductProvider } from "./context/ProductContext";
 
 export const metadata = {
   title: "Next.js",
@@ -8,7 +9,9 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <ProductProvider>{children}</ProductProvider>
+      </body>
     </html>
   );
 }
