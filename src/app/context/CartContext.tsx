@@ -14,6 +14,7 @@ interface CartContextType {
   subtractCart: (id: number) => void;
   removeFromCart: (id: number) => void;
   clearCart: () => void;
+  checkout: () => void;
   totalItems: number;
   totalPrice: number;
 }
@@ -22,18 +23,20 @@ const CartContext = createContext<CartContextType | null>(null);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const { currentUser } = useAuth();
-  const CART_KEY = `cart-${currentUser?.email}`;
   const [cart, setCart] = useState<CartItem[]>([]);
   const [totalItems, setTotalItems] = useState(0);
   const [totalPrice, setTotalPrice] = useState(0);
+  const CART_KEY: string | null = currentUser ? `cart-${currentUser.email}` : null;
 
   useEffect(() => {
-    const storedCart = localStorage.getItem("cart");
+    if (!CART_KEY) return;
+    const storedCart = localStorage.getItem(CART_KEY);
     if (storedCart) setCart(JSON.parse(storedCart));
   }, [CART_KEY]);
 
   useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(cart));
+    if (!CART_KEY) return;
+    localStorage.setItem(CART_KEY, JSON.stringify(cart));
     const totalQty = cart.reduce((sum, item) => sum + item.quantity, 0);
     const totalHarga = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
@@ -61,9 +64,27 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setCart((prev) => prev.filter((item) => item.id !== id));
   };
 
+  const checkout = () => {
+    const products: Product[] = JSON.parse(localStorage.getItem("products") || "[]");
+
+    const updatedProducts = products.map((p) => {
+      const cartItem = cart.find((c) => c.id === p.id);
+      if (!cartItem) return p;
+
+      return {
+        ...p,
+        stock: Math.max(p.stock - cartItem.quantity, 0),
+      };
+    });
+
+    localStorage.setItem("products", JSON.stringify(updatedProducts));
+    window.dispatchEvent(new Event("refresh-products"));
+    clearCart();
+  };
+
   const clearCart = () => setCart([]);
 
-  return <CartContext.Provider value={{ cart, addToCart, subtractCart, removeFromCart, clearCart, totalItems, totalPrice }}>{children}</CartContext.Provider>;
+  return <CartContext.Provider value={{ cart, addToCart, subtractCart, removeFromCart, clearCart, totalItems, totalPrice, checkout }}>{children}</CartContext.Provider>;
 }
 
 export const useCartContext = () => {

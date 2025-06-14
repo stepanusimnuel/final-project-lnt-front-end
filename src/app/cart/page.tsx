@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 export default function CartPage() {
-  const { cart, addToCart, subtractCart, removeFromCart, clearCart, totalPrice } = useCartContext();
+  const { cart, addToCart, subtractCart, removeFromCart, clearCart, totalPrice, checkout } = useCartContext();
   const { currentUser, checkingAuth } = useAuth();
   const router = useRouter();
 
@@ -78,8 +78,8 @@ export default function CartPage() {
 
           <div className="text-right mt-6">
             <p className="text-xl font-bold mb-2">Total: ${totalPrice.toFixed(2)}</p>
-            <Link href="/checkout">
-              <button className="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 transition">Checkout Sekarang</button>
+            <Link href="/checkout" onClick={checkout}>
+              <button className="bg-orange-600 text-white px-6 py-2 rounded hover:bg-orange-700 transition">Checkout</button>
             </Link>
           </div>
         </div>
