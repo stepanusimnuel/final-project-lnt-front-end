@@ -6,6 +6,7 @@ import { isLoggedIn } from "../../utils/forms/validator";
 import { useRouter } from "next/navigation";
 import { useProductContext } from "./context/ProductContext";
 import Link from "next/link";
+import CartButton from "../../components/buttons/CartButton";
 
 export default function Dashboard() {
   const { currentUser, logout } = useAuth();
@@ -79,7 +80,10 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen p-6 bg-gray-100">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">Halo, {currentUser?.name}</h1>
+        <div className="flex gap-4 items-center">
+          <h1 className="text-3xl font-bold">Halo, {currentUser?.name}</h1>
+          <CartButton />
+        </div>
         <button onClick={logout} className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition">
           Logout
         </button>
@@ -145,8 +149,8 @@ export default function Dashboard() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mx-6">
         {sortedProducts.map((product) => (
-          <Link key={product.id} href={`/product/${product.id}`}>
-            <div className="bg-white rounded shadow hover:shadow-md transition min-h-[400px]">
+          <div key={product.id} className="bg-white rounded shadow hover:shadow-2xl transition min-h-[450px] flex flex-col justify-between cursor-pointer">
+            <Link href={`/product/${product.id}`}>
               <img src={product.thumbnail} alt={product.title} className="w-full h-40 object-cover rounded mb-3" />
               <h2 className="text-lg font-semibold bg-gray-100 px-4 py-2">{product.title}</h2>
               <div className="p-4">
@@ -160,8 +164,9 @@ export default function Dashboard() {
                   <span className="bg-red-100 text-red-600 text-xs font-semibold px-2 py-1 rounded">-{product.discountPercentage}%</span>
                 </div>
               </div>
-            </div>
-          </Link>
+            </Link>
+            <div className="w-full py-2 text-white text-sm text-center bg-blue-600 rounded-b transition hover:bg-blue-700">+ Keranjang</div>
+          </div>
         ))}
       </div>
     </div>

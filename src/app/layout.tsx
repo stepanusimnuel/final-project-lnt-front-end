@@ -1,5 +1,6 @@
 import "./globals.css";
 import { ProductProvider } from "./context/ProductContext";
+import { CartProvider } from "./context/CartContext";
 
 export const metadata = {
   title: "Next.js",
@@ -10,7 +11,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body>
-        <ProductProvider>{children}</ProductProvider>
+        <ProductProvider>
+          <CartProvider>{children}</CartProvider>
+        </ProductProvider>
       </body>
     </html>
   );
