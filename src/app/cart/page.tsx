@@ -84,7 +84,13 @@ export default function CartPage() {
 
           <div className="text-right mt-6">
             <p className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">Total: ${totalPrice.toFixed(2)}</p>
-            <Link href="/checkout" onClick={checkout}>
+            <Link
+              href="/checkout"
+              onClick={() => {
+                checkout();
+                localStorage.setItem("hasCheckedOut", "true");
+              }}
+            >
               <button className="bg-orange-600 text-white px-6 py-2 rounded hover:bg-orange-700 transition">Checkout</button>
             </Link>
           </div>

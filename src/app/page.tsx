@@ -3,15 +3,13 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import { useProductContext } from "./context/ProductContext";
-import Link from "next/link";
-import CartButton from "../../components/buttons/CartButton";
 import { useRouter } from "next/navigation";
-import DropdownProfile from "../../components/dropdowns/DropdownProfile";
 import ThemeButton from "../../components/buttons/ThemeButton";
-import { useCartContext } from "./context/CartContext";
+import Navbar from "../../components/navbar/Navbar";
+import ProductCard from "../../components/product/ProductCard";
+import DropdownFilterSelect from "../../components/dropdowns/DropdownFilterSelect";
 
 export default function Dashboard() {
-  const { addToCart } = useCartContext();
   const { currentUser, checkingAuth } = useAuth();
   const router = useRouter();
 
@@ -20,6 +18,8 @@ export default function Dashboard() {
   const uniqueBrands = [...new Set(products.map((p) => p.brand).filter(Boolean))];
   const uniqueCategories = [...new Set(products.map((p) => p.category).filter(Boolean))];
   const uniqueTags = [...new Set(products.flatMap((p) => p.tags).filter(Boolean))];
+  const uniqueStars = ["0", "1", "2", "3", "4", "5"];
+  const uniqueSortBy = ["Rating Tertinggi", "Diskon Terbesar", "Harga Tertinggi", "Harga Terendah", "Stok Terbanyak", "Ulasan Terbanyak"];
 
   const [selectedBrand, setSelectedBrand] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -49,32 +49,22 @@ export default function Dashboard() {
 
   const sortedProducts = [...filteredProducts].sort((a, b) => {
     switch (sortBy) {
-      case "rating":
+      case "Rating Tertinggi":
         return b.rating - a.rating;
-      case "discount":
+      case "Diskon Terbesar":
         return b.discountPercentage - a.discountPercentage;
-      case "price-high":
+      case "Harga Tertinggi":
         return b.price - a.price;
-      case "price-low":
+      case "Harga Terendah":
         return a.price - b.price;
-      case "stock":
+      case "Stok Terbanyak":
         return b.stock - a.stock;
-      case "reviews":
+      case "Ulasan Terbanyak":
         return b.reviews.length - a.reviews.length;
       default:
         return 0;
     }
   });
-
-  const getDiscountPrice = (price: number, disc: number): number => {
-    const res: number = price - (disc * price) / 100;
-    return Number(res.toFixed(2));
-  };
-
-  const truncateDescription = (desc: string, maxWords: number = 15): string => {
-    const words = desc.split(" ");
-    return words.length <= maxWords ? desc : words.slice(0, maxWords).join(" ") + "...";
-  };
 
   const toggleTag = (tag: string) => {
     setSelectedTags((prev) => (prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]));
@@ -84,13 +74,7 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen p-6 pt-32 relative bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
-      <div className="flex justify-between items-center px-6 py-2 fixed top-0 left-0 right-0 z-50 bg-white dark:bg-gray-800 shadow">
-        <CartButton />
-        <div className="text-end">
-          <h1 className="text-2xl font-bold">Halo,</h1>
-          <DropdownProfile />
-        </div>
-      </div>
+      <Navbar />
 
       <div className="flex gap-2 mb-4 flex-wrap justify-center">
         {uniqueTags.map((tag, i) => (
@@ -102,57 +86,14 @@ export default function Dashboard() {
 
       <div className="flex justify-between flex-wrap gap-4 items-end mb-6">
         <div className="flex flex-wrap gap-4">
-          <select
-            onChange={(e) => setSelectedBrand(e.target.value)}
-            className="p-2 px-4 bg-white dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
-          >
-            <option value="">Semua Brand</option>
-            {uniqueBrands.map((brand, i) => (
-              <option key={i} value={brand}>
-                {brand}
-              </option>
-            ))}
-          </select>
-
-          <select
-            onChange={(e) => setSelectedCategory(e.target.value)}
-            className="p-2 px-4 bg-white dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
-          >
-            <option value="">Semua Kategori</option>
-            {uniqueCategories.map((category, i) => (
-              <option key={i} value={category}>
-                {category}
-              </option>
-            ))}
-          </select>
-
-          <select
-            onChange={(e) => setMinRating(Number(e.target.value))}
-            className="p-2 px-4 bg-white dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
-          >
-            <option value="0">⭐ 0+</option>
-            <option value="1">⭐ 1+</option>
-            <option value="2">⭐ 2+</option>
-            <option value="3">⭐ 3+</option>
-            <option value="4">⭐ 4+</option>
-            <option value="5">⭐ 5</option>
-          </select>
+          <DropdownFilterSelect label="Brand" options={uniqueBrands} onChange={setSelectedBrand} />
+          <DropdownFilterSelect label="Kategori" options={uniqueCategories} onChange={setSelectedCategory} />
+          <DropdownFilterSelect label="Rating" options={uniqueStars.map((r) => `⭐ ${r}+`)} values={uniqueStars} onChange={(v) => setMinRating(Number(v))} />
         </div>
 
         <div className="w-full flex gap-2 sm:w-auto">
-          <select
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
-            className="p-2 px-4 bg-white dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
-          >
-            <option value="">Urutkan</option>
-            <option value="rating">Rating Tertinggi</option>
-            <option value="discount">Diskon Terbesar</option>
-            <option value="price-high">Harga Tertinggi</option>
-            <option value="price-low">Harga Terendah</option>
-            <option value="stock">Stok Terbanyak</option>
-            <option value="reviews">Ulasan Terbanyak</option>
-          </select>
+          <DropdownFilterSelect label="Urutkan" options={uniqueSortBy} values={uniqueSortBy} onChange={(val) => setSortBy(val)} />
+
           <input
             type="text"
             placeholder="🔍 Cari produk..."
@@ -165,29 +106,7 @@ export default function Dashboard() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mx-6">
         {sortedProducts.map((product) => (
-          <div key={product.id} className="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded shadow hover:shadow-2xl transition min-h-[450px] flex flex-col justify-between cursor-pointer">
-            <Link href={`/product/${product.id}`} className={`${product.stock <= 0 ? "opacity-50" : ""}`}>
-              <img src={product.thumbnail} alt={product.title} className="w-full h-40 object-cover rounded mb-3" />
-              <h2 className="text-lg font-semibold bg-gray-100 dark:bg-gray-700 px-4 py-2">{product.title}</h2>
-              <div className="p-4">
-                <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">
-                  {product.brand} - {product.category}
-                </p>
-                <p className="text-sm text-gray-700 dark:text-gray-200">{truncateDescription(product.description)}</p>
-                <div className="flex items-center gap-2 mt-2">
-                  <span className="text-lg text-green-600 font-bold">${getDiscountPrice(product.price, product.discountPercentage).toFixed(2)}</span>
-                  <span className="bg-red-100 text-red-600 text-xs font-semibold px-2 py-1 rounded">-{product.discountPercentage}%</span>
-                </div>
-              </div>
-            </Link>
-            <button
-              onClick={() => addToCart(product)}
-              className={`bg-blue-600 text-white text-xs text-center w-full py-2 rounded-b transition ${product.stock <= 0 ? "cursor-not-allowed opacity-50" : "cursor-pointer hover:bg-blue-700"}`}
-              disabled={product.stock <= 0}
-            >
-              + Keranjang
-            </button>
-          </div>
+          <ProductCard product={product} key={product.id} />
         ))}
       </div>
 
