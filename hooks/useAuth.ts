@@ -3,13 +3,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { User } from "../types/user";
 
-export function useAuth({
-  redirectIfFound = false,
-  redirectTo = "",
-}: {
-  redirectIfFound?: boolean;
-  redirectTo?: string;
-} = {}) {
+export function useAuth() {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [checkingAuth, setCheckingAuth] = useState(true);
   const router = useRouter();
@@ -20,7 +14,7 @@ export function useAuth({
     setCurrentUser(user);
 
     setCheckingAuth(false);
-  }, [redirectIfFound, redirectTo, router]);
+  }, [router]);
 
   function register(name: string, email: string, password: string, phone_number: string, date_of_birth: string) {
     const users: User[] = JSON.parse(localStorage.getItem("users") || "[]");

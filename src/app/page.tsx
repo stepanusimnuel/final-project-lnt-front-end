@@ -5,12 +5,14 @@ import { useAuth } from "../../hooks/useAuth";
 import { useProductContext } from "./context/ProductContext";
 import Link from "next/link";
 import CartButton from "../../components/buttons/CartButton";
-import { useCartContext } from "./context/CartContext";
 import { useRouter } from "next/navigation";
+import DropdownProfile from "../../components/dropdowns/DropdownProfile";
+import ThemeButton from "../../components/buttons/ThemeButton";
+import { useCartContext } from "./context/CartContext";
 
 export default function Dashboard() {
   const { addToCart } = useCartContext();
-  const { currentUser, checkingAuth, logout } = useAuth();
+  const { currentUser, checkingAuth } = useAuth();
   const router = useRouter();
 
   const { products, checking } = useProductContext();
@@ -23,9 +25,7 @@ export default function Dashboard() {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [minRating, setMinRating] = useState(0);
-
   const [toSearch, setToSearch] = useState("");
-
   const [sortBy, setSortBy] = useState("");
 
   useEffect(() => {
@@ -35,7 +35,7 @@ export default function Dashboard() {
   }, [checkingAuth, currentUser]);
 
   if (checkingAuth || !currentUser) {
-    return <div className="text-center mt-20">Loading...</div>;
+    return <div className="text-center mt-20 text-gray-600 dark:text-gray-300">Loading...</div>;
   }
 
   const filteredProducts = products.filter(
@@ -80,23 +80,21 @@ export default function Dashboard() {
     setSelectedTags((prev) => (prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]));
   };
 
-  if (checking) return <h2 className="text-center mt-10 text-gray-500">Loading...</h2>;
+  if (checking) return <h2 className="text-center mt-10 text-gray-500 dark:text-gray-300">Loading...</h2>;
 
   return (
-    <div className="min-h-screen p-6 bg-gray-100 pt-24 relative">
-      <div className="flex justify-between items-center px-6 py-4 fixed top-0 left-0 right-0 z-50 bg-white shadow">
-        <div className="flex gap-4 items-center relative">
-          <h1 className="text-3xl font-bold">Halo, {currentUser?.name}</h1>
-          <CartButton />
+    <div className="min-h-screen p-6 pt-32 relative bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
+      <div className="flex justify-between items-center px-6 py-2 fixed top-0 left-0 right-0 z-50 bg-white dark:bg-gray-800 shadow">
+        <CartButton />
+        <div className="text-end">
+          <h1 className="text-2xl font-bold">Halo,</h1>
+          <DropdownProfile />
         </div>
-        <button onClick={logout} className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition relative">
-          Logout
-        </button>
       </div>
 
       <div className="flex gap-2 mb-4 flex-wrap justify-center">
         {uniqueTags.map((tag, i) => (
-          <span key={i} onClick={() => toggleTag(tag)} className={`py-1 px-3 text-sm rounded-xl border cursor-pointer hover:bg-rose-300 transition ${selectedTags.includes(tag) ? "bg-rose-300" : "bg-rose-200"}`}>
+          <span key={i} onClick={() => toggleTag(tag)} className={`py-1 px-3 text-sm rounded-xl border cursor-pointer transition ${selectedTags.includes(tag) ? "bg-rose-400 dark:bg-rose-600 text-white" : "bg-rose-200 dark:bg-rose-800"}`}>
             {tag}
           </span>
         ))}
@@ -104,7 +102,10 @@ export default function Dashboard() {
 
       <div className="flex justify-between flex-wrap gap-4 items-end mb-6">
         <div className="flex flex-wrap gap-4">
-          <select onChange={(e) => setSelectedBrand(e.target.value)} className="p-2 px-4 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300">
+          <select
+            onChange={(e) => setSelectedBrand(e.target.value)}
+            className="p-2 px-4 bg-white dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
+          >
             <option value="">Semua Brand</option>
             {uniqueBrands.map((brand, i) => (
               <option key={i} value={brand}>
@@ -113,7 +114,10 @@ export default function Dashboard() {
             ))}
           </select>
 
-          <select onChange={(e) => setSelectedCategory(e.target.value)} className="p-2 px-4 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300">
+          <select
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            className="p-2 px-4 bg-white dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
+          >
             <option value="">Semua Kategori</option>
             {uniqueCategories.map((category, i) => (
               <option key={i} value={category}>
@@ -122,7 +126,10 @@ export default function Dashboard() {
             ))}
           </select>
 
-          <select onChange={(e) => setMinRating(Number(e.target.value))} className="p-2 px-4 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300">
+          <select
+            onChange={(e) => setMinRating(Number(e.target.value))}
+            className="p-2 px-4 bg-white dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
+          >
             <option value="0">⭐ 0+</option>
             <option value="1">⭐ 1+</option>
             <option value="2">⭐ 2+</option>
@@ -133,7 +140,11 @@ export default function Dashboard() {
         </div>
 
         <div className="w-full flex gap-2 sm:w-auto">
-          <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className="p-2 px-4 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300">
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            className="p-2 px-4 bg-white dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
+          >
             <option value="">Urutkan</option>
             <option value="rating">Rating Tertinggi</option>
             <option value="discount">Diskon Terbesar</option>
@@ -147,24 +158,23 @@ export default function Dashboard() {
             placeholder="🔍 Cari produk..."
             value={toSearch}
             onChange={(e) => setToSearch(e.target.value)}
-            className="w-full sm:w-72 p-2 px-4 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
+            className="w-full sm:w-72 p-2 px-4 bg-white dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
           />
         </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mx-6">
         {sortedProducts.map((product) => (
-          <div key={product.id} className="bg-white rounded shadow hover:shadow-2xl transition min-h-[450px] flex flex-col justify-between cursor-pointer">
+          <div key={product.id} className="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded shadow hover:shadow-2xl transition min-h-[450px] flex flex-col justify-between cursor-pointer">
             <Link href={`/product/${product.id}`} className={`${product.stock <= 0 ? "opacity-50" : ""}`}>
               <img src={product.thumbnail} alt={product.title} className="w-full h-40 object-cover rounded mb-3" />
-              <h2 className="text-lg font-semibold bg-gray-100 px-4 py-2">{product.title}</h2>
+              <h2 className="text-lg font-semibold bg-gray-100 dark:bg-gray-700 px-4 py-2">{product.title}</h2>
               <div className="p-4">
-                <p className="text-sm text-gray-600 mb-2">
+                <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">
                   {product.brand} - {product.category}
                 </p>
-                <p className="text-sm text-gray-700">{truncateDescription(product.description)}</p>
+                <p className="text-sm text-gray-700 dark:text-gray-200">{truncateDescription(product.description)}</p>
                 <div className="flex items-center gap-2 mt-2">
-                  {/* <span className="text-sm text-gray-400 line-through">${product.price.toFixed(2)}</span> */}
                   <span className="text-lg text-green-600 font-bold">${getDiscountPrice(product.price, product.discountPercentage).toFixed(2)}</span>
                   <span className="bg-red-100 text-red-600 text-xs font-semibold px-2 py-1 rounded">-{product.discountPercentage}%</span>
                 </div>
@@ -172,7 +182,7 @@ export default function Dashboard() {
             </Link>
             <button
               onClick={() => addToCart(product)}
-              className={`bg-blue-600 text-white text-xs text-center w-full py-2 rounded-b  transition ${product.stock <= 0 ? "cursor-not-allowed opacity-50" : "cursor-pointer hover:bg-blue-700"}`}
+              className={`bg-blue-600 text-white text-xs text-center w-full py-2 rounded-b transition ${product.stock <= 0 ? "cursor-not-allowed opacity-50" : "cursor-pointer hover:bg-blue-700"}`}
               disabled={product.stock <= 0}
             >
               + Keranjang
@@ -180,6 +190,8 @@ export default function Dashboard() {
           </div>
         ))}
       </div>
+
+      <ThemeButton />
     </div>
   );
 }
