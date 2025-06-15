@@ -65,12 +65,12 @@ export default function CartPage() {
                   –
                 </button>
                 <span className="min-w-[24px] text-center">{item.quantity}</span>
-                <button onClick={() => addToCart(item)} className="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300">
+                <button onClick={() => addToCart(item)} className={`px-2 py-1 bg-gray-200 rounded ${item.quantity >= item.stock ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-300"}}`} disabled={item.quantity >= item.stock}>
                   +
                 </button>
               </div>
 
-              <button onClick={() => removeFromCart(item.id)} className="text-red-500 text-sm hover:underline ml-4">
+              <button onClick={() => removeFromCart(item.id)} className="text-red-500 text-sm hover:underline ml-4 cursor-pointer">
                 Hapus
               </button>
             </div>

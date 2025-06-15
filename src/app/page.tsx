@@ -155,7 +155,7 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mx-6">
         {sortedProducts.map((product) => (
           <div key={product.id} className="bg-white rounded shadow hover:shadow-2xl transition min-h-[450px] flex flex-col justify-between cursor-pointer">
-            <Link href={`/product/${product.id}`}>
+            <Link href={`/product/${product.id}`} className={`${product.stock <= 0 ? "opacity-50" : ""}`}>
               <img src={product.thumbnail} alt={product.title} className="w-full h-40 object-cover rounded mb-3" />
               <h2 className="text-lg font-semibold bg-gray-100 px-4 py-2">{product.title}</h2>
               <div className="p-4">
@@ -170,7 +170,11 @@ export default function Dashboard() {
                 </div>
               </div>
             </Link>
-            <button onClick={() => addToCart(product)} className="bg-blue-600 text-white text-xs text-center w-full py-2 rounded-b hover:bg-blue-700 cursor-pointer transition">
+            <button
+              onClick={() => addToCart(product)}
+              className={`bg-blue-600 text-white text-xs text-center w-full py-2 rounded-b  transition ${product.stock <= 0 ? "cursor-not-allowed opacity-50" : "cursor-pointer hover:bg-blue-700"}`}
+              disabled={product.stock <= 0}
+            >
               + Keranjang
             </button>
           </div>
