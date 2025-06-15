@@ -32,11 +32,19 @@ export default function ProfilePage() {
 
     if (!name) return setError("Nama tidak boleh kosong");
 
-    if ((password && (!newPassword || !confirmPassword)) || !validatePassword(password) || !validatePassword(newPassword) || !validatePassword(confirmPassword)) {
-      return setError("Password minimal 6 karakter");
-    }
+    if (password) {
+      if (!newPassword || !confirmPassword) {
+        return setError("Mohon isi password baru dan konfirmasi password.");
+      }
 
-    if ((password && password !== currentUser.password) || newPassword !== confirmPassword) return setError("Password tidak sama");
+      if (!validatePassword(password) || !validatePassword(newPassword) || !validatePassword(confirmPassword)) {
+        return setError("Password minimal 6 karakter.");
+      }
+
+      if (newPassword !== confirmPassword) {
+        return setError("Password baru dan konfirmasi tidak cocok.");
+      }
+    }
 
     if (phone && !validatePhoneNumber(phone)) {
       return setError("Format nomor telpon tidak sesuai");
@@ -49,9 +57,11 @@ export default function ProfilePage() {
             name,
             phone_number: phone,
             date_of_birth: dob,
-            ...{
-              password: newPassword,
-            },
+            ...(newPassword
+              ? {
+                  password: newPassword,
+                }
+              : {}),
           }
         : u
     );
