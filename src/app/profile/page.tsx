@@ -5,9 +5,11 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../../../hooks/useAuth";
 import { validatePhoneNumber, validatePassword } from "../../../utils/forms/validator";
 import ThemeButton from "../../../components/buttons/ThemeButton";
+import { useRouter } from "next/navigation";
 
 export default function ProfilePage() {
-  const { currentUser, logout } = useAuth();
+  const { currentUser, logout, checkingAuth } = useAuth();
+  const router = useRouter();
   const [name, setName] = useState(currentUser?.name || "");
   const [phone, setPhone] = useState(currentUser?.phone_number || "");
   const [dob, setDob] = useState(currentUser?.date_of_birth || "");
@@ -24,7 +26,15 @@ export default function ProfilePage() {
     }
   }, [currentUser]);
 
-  if (!currentUser) return <p className="text-center mt-10 text-gray-800 dark:text-gray-200">Loading ...</p>;
+  useEffect(() => {
+    if (!checkingAuth && !currentUser) {
+      router.replace("/login");
+    }
+  }, [checkingAuth, currentUser]);
+
+  if (checkingAuth || !currentUser) {
+    return <div className="text-center mt-20 text-gray-600 dark:text-gray-300">Loading...</div>;
+  }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

@@ -8,6 +8,7 @@ import ThemeButton from "../../components/buttons/ThemeButton";
 import Navbar from "../../components/navbar/Navbar";
 import ProductCard from "../../components/product/ProductCard";
 import DropdownFilterSelect from "../../components/dropdowns/DropdownFilterSelect";
+import FilterModal from "../../components/modal/FilterModal";
 
 export default function Dashboard() {
   const { currentUser, checkingAuth } = useAuth();
@@ -18,7 +19,6 @@ export default function Dashboard() {
   const uniqueBrands = [...new Set(products.map((p) => p.brand).filter(Boolean))];
   const uniqueCategories = [...new Set(products.map((p) => p.category).filter(Boolean))];
   const uniqueTags = [...new Set(products.flatMap((p) => p.tags).filter(Boolean))];
-  const uniqueStars = ["0", "1", "2", "3", "4", "5"];
   const uniqueSortBy = ["Rating Tertinggi", "Diskon Terbesar", "Harga Tertinggi", "Harga Terendah", "Stok Terbanyak", "Ulasan Terbanyak"];
 
   const [selectedBrand, setSelectedBrand] = useState("");
@@ -27,6 +27,9 @@ export default function Dashboard() {
   const [minRating, setMinRating] = useState(0);
   const [toSearch, setToSearch] = useState("");
   const [sortBy, setSortBy] = useState("");
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [minPrice, setMinPrice] = useState(0);
+  const [maxPrice, setMaxPrice] = useState(Infinity);
 
   useEffect(() => {
     if (!checkingAuth && !currentUser) {
@@ -43,8 +46,10 @@ export default function Dashboard() {
       (!selectedBrand || product.brand === selectedBrand) &&
       (!selectedCategory || product.category === selectedCategory) &&
       product.rating >= minRating &&
-      product.title?.toLowerCase().includes(toSearch.toLowerCase()) &&
-      (selectedTags.length === 0 || selectedTags.every((tag) => product.tags?.includes(tag)))
+      product.price >= minPrice &&
+      product.price <= maxPrice &&
+      product.title.toLowerCase().includes(toSearch.toLowerCase()) &&
+      (selectedTags.length === 0 || selectedTags.every((tag) => product.tags.includes(tag)))
   );
 
   const sortedProducts = [...filteredProducts].sort((a, b) => {
@@ -86,9 +91,9 @@ export default function Dashboard() {
 
       <div className="flex justify-between flex-wrap gap-4 items-end mb-6">
         <div className="flex flex-wrap gap-4">
-          <DropdownFilterSelect label="Brand" options={uniqueBrands} onChange={setSelectedBrand} />
-          <DropdownFilterSelect label="Kategori" options={uniqueCategories} onChange={setSelectedCategory} />
-          <DropdownFilterSelect label="Rating" options={uniqueStars.map((r) => `⭐ ${r}+`)} values={uniqueStars} onChange={(v) => setMinRating(Number(v))} />
+          <button onClick={() => setIsFilterOpen(true)} className="p-2 px-4 bg-white hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white border border-gray-300 dark:border-gray-600 rounded shadow-sm">
+            🔍 Filter
+          </button>
         </div>
 
         <div className="w-full flex gap-2 sm:w-auto">
@@ -111,6 +116,20 @@ export default function Dashboard() {
       </div>
 
       <ThemeButton />
+
+      <FilterModal
+        isOpen={isFilterOpen}
+        onClose={() => setIsFilterOpen(false)}
+        brands={uniqueBrands}
+        categories={uniqueCategories}
+        onApply={({ brand, category, rating, minPrice, maxPrice }) => {
+          setSelectedBrand(brand);
+          setSelectedCategory(category);
+          setMinRating(rating);
+          setMinPrice(minPrice);
+          setMaxPrice(maxPrice);
+        }}
+      />
     </div>
   );
 }
