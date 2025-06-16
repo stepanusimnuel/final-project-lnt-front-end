@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useAuth } from "../../hooks/useAuth";
 import { useProductContext } from "./context/ProductContext";
 import { useRouter } from "next/navigation";
 import ThemeButton from "../../components/buttons/ThemeButton";
@@ -9,9 +8,10 @@ import Navbar from "../../components/navbar/Navbar";
 import ProductCard from "../../components/product/ProductCard";
 import DropdownFilterSelect from "../../components/dropdowns/DropdownFilterSelect";
 import FilterModal from "../../components/modal/FilterModal";
+import { useAuth } from "./context/AuthContext";
 
 export default function Dashboard() {
-  const { currentUser, checkingAuth } = useAuth();
+  const { currentUser } = useAuth();
   const router = useRouter();
 
   const { products, checking } = useProductContext();
@@ -32,12 +32,12 @@ export default function Dashboard() {
   const [maxPrice, setMaxPrice] = useState(Infinity);
 
   useEffect(() => {
-    if (!checkingAuth && !currentUser) {
+    if (!currentUser) {
       router.replace("/login");
     }
-  }, [checkingAuth, currentUser]);
+  }, [currentUser]);
 
-  if (checkingAuth || !currentUser) {
+  if (!currentUser) {
     return <div className="text-center mt-20 text-gray-600 dark:text-gray-300">Loading...</div>;
   }
 

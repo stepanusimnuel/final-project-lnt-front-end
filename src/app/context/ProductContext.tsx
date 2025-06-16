@@ -27,8 +27,9 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
         setChecking(false);
       } else {
         const res = await axios.get("https://dummyjson.com/products");
-        localStorage.setItem("products", JSON.stringify(res.data.products));
-        setProducts(res.data.products);
+        const fetchedProducts = res.data.products;
+        localStorage.setItem("products", JSON.stringify(fetchedProducts));
+        setProducts(fetchedProducts);
         setChecking(false);
       }
     };

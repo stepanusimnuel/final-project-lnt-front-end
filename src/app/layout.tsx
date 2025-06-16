@@ -2,6 +2,7 @@ import "./globals.css";
 import { ProductProvider } from "./context/ProductContext";
 import { CartProvider } from "./context/CartContext";
 import { ThemeProvider } from "./context/ThemeContext";
+import { AuthProvider } from "./context/AuthContext";
 
 export const metadata = {
   title: "E-commerce",
@@ -13,9 +14,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body>
         <ThemeProvider>
-          <ProductProvider>
-            <CartProvider>{children}</CartProvider>
-          </ProductProvider>
+          <AuthProvider>
+            <ProductProvider>
+              <CartProvider>{children}</CartProvider>
+            </ProductProvider>
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>

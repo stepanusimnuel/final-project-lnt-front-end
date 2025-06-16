@@ -2,11 +2,11 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "../../../hooks/useAuth";
 import ThemeButton from "../../../components/buttons/ThemeButton";
+import { useAuth } from "../context/AuthContext";
 
 export default function TopUpPage() {
-  const { currentUser, login } = useAuth();
+  const { currentUser, login, updateCurrentUser } = useAuth();
   const router = useRouter();
 
   const [amount, setAmount] = useState<number>(0);
@@ -26,6 +26,7 @@ export default function TopUpPage() {
       if (user.email === currentUser.email) {
         user.balance = (user.balance || 0) + amount;
         localStorage.setItem("currentUser", JSON.stringify(user));
+        updateCurrentUser(user);
         return user;
       }
       return user;

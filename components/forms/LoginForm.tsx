@@ -3,23 +3,23 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useAuth } from "../../hooks/useAuth";
 import { InputField } from "./InputField";
+import { useAuth } from "@/app/context/AuthContext";
 
 export default function LoginForm() {
-  const { currentUser, checkingAuth, login } = useAuth();
+  const { currentUser, login } = useAuth();
   const router = useRouter();
 
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if (!checkingAuth && currentUser) {
+    if (currentUser) {
       router.replace("/");
     }
-  }, [checkingAuth, currentUser]);
+  }, [currentUser]);
 
-  if (checkingAuth || currentUser) {
+  if (currentUser) {
     return <div className="text-center mt-20">Loading...</div>;
   }
 

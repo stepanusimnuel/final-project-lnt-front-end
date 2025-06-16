@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useAuth } from "../../../hooks/useAuth";
 import ThemeButton from "../../../components/buttons/ThemeButton";
 import { useRouter } from "next/navigation";
+import { useAuth } from "../context/AuthContext";
 
 type CartItem = {
   id: number;
@@ -20,7 +20,7 @@ type HistoryRecord = {
 };
 
 export default function HistoryPage() {
-  const { currentUser, checkingAuth } = useAuth();
+  const { currentUser } = useAuth();
   const router = useRouter();
   const [history, setHistory] = useState<HistoryRecord[]>([]);
 
@@ -32,12 +32,12 @@ export default function HistoryPage() {
   }, [currentUser]);
 
   useEffect(() => {
-    if (!checkingAuth && !currentUser) {
+    if (!currentUser) {
       router.replace("/login");
     }
-  }, [checkingAuth, currentUser]);
+  }, [currentUser]);
 
-  if (checkingAuth || !currentUser) {
+  if (!currentUser) {
     return <div className="text-center mt-20 text-gray-600 dark:text-gray-300">Loading...</div>;
   }
 

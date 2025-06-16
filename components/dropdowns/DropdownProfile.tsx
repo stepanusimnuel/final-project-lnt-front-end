@@ -2,9 +2,9 @@
 
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "../../hooks/useAuth";
 import Image from "next/image";
 import { useOutsideClick } from "../../hooks/useOutsideClick";
+import { useAuth } from "@/app/context/AuthContext";
 
 export default function DropdownProfile() {
   const { currentUser, logout } = useAuth();

@@ -3,27 +3,25 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useCartContext } from "../context/CartContext";
-import { useAuth } from "../../../hooks/useAuth";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import ThemeButton from "../../../components/buttons/ThemeButton";
+import { useAuth } from "../context/AuthContext";
 
 export default function CartPage() {
   const { cart, addToCart, subtractCart, removeFromCart, clearCart, totalPrice, checkout } = useCartContext();
-  const { currentUser, checkingAuth } = useAuth();
+  const { currentUser } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (!checkingAuth && !currentUser) {
+    if (!currentUser) {
       router.replace("/login");
     }
-  }, [checkingAuth, currentUser]);
+  }, [currentUser]);
 
-  if (checkingAuth || !currentUser) {
+  if (!currentUser) {
     return <div className="text-center mt-20 text-gray-800 dark:text-gray-100">Loading...</div>;
   }
-
-  if (checkingAuth) return <p className="text-center mt-10 text-gray-800 dark:text-gray-100">Loading ...</p>;
 
   return (
     <div className="p-6 max-w-5xl mx-auto min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -46,7 +44,7 @@ export default function CartPage() {
       ) : (
         <>
           <div className="text-right w-full mb-1 text-lg dark:text-white">
-            Your balance: <span className="font-semibold ">${currentUser.balance}</span>
+            Your balance: <span className="font-semibold ">${currentUser.balance.toFixed(2)}</span>
           </div>
           <div className="space-y-4">
             {cart.map((item) => (

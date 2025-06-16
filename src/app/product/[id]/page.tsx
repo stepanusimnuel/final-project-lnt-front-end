@@ -6,27 +6,27 @@ import { useProductContext } from "@/app/context/ProductContext";
 import { useEffect, useState } from "react";
 import ReviewComment from "../../../../components/product/ReviewComment";
 import { useCartContext } from "@/app/context/CartContext";
-import { useAuth } from "../../../../hooks/useAuth";
 import { useRouter } from "next/navigation";
 import ThemeButton from "../../../../components/buttons/ThemeButton";
 import Navbar from "../../../../components/navbar/Navbar";
+import { useAuth } from "@/app/context/AuthContext";
 
 export default function ProductDetail() {
-  const { currentUser, checkingAuth } = useAuth();
+  const { currentUser } = useAuth();
   const router = useRouter();
 
   const { id } = useParams();
-  const { products, checking } = useProductContext();
+  const { products } = useProductContext();
   const { addToCart } = useCartContext();
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
-    if (!checkingAuth && !currentUser) {
+    if (!currentUser) {
       router.replace("/login");
     }
-  }, [checkingAuth, currentUser]);
+  }, [currentUser]);
 
-  if (checkingAuth || !currentUser) {
+  if (!currentUser) {
     return <div className="text-center mt-20 text-gray-800 dark:text-gray-100">Loading...</div>;
   }
 

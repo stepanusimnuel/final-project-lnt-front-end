@@ -4,11 +4,11 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { validateEmail, validateName, validatePassword, validatePhoneNumber } from "../../utils/forms/validator";
 import Link from "next/link";
-import { useAuth } from "../../hooks/useAuth";
 import { InputField } from "./InputField";
+import { useAuth } from "@/app/context/AuthContext";
 
 export default function RegisterForm() {
-  const { currentUser, checkingAuth, register } = useAuth();
+  const { currentUser, register } = useAuth();
   const router = useRouter();
 
   const [form, setForm] = useState({
@@ -21,12 +21,12 @@ export default function RegisterForm() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if (!checkingAuth && currentUser) {
+    if (currentUser) {
       router.replace("/");
     }
-  }, [checkingAuth, currentUser]);
+  }, [currentUser]);
 
-  if (checkingAuth || currentUser) {
+  if (currentUser) {
     return <div className="text-center mt-20">Loading...</div>;
   }
 

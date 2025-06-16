@@ -2,13 +2,13 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { useAuth } from "../../../hooks/useAuth";
 import { validatePhoneNumber, validatePassword } from "../../../utils/forms/validator";
 import ThemeButton from "../../../components/buttons/ThemeButton";
 import { useRouter } from "next/navigation";
+import { useAuth } from "../context/AuthContext";
 
 export default function ProfilePage() {
-  const { currentUser, logout, checkingAuth } = useAuth();
+  const { currentUser, logout } = useAuth();
   const router = useRouter();
   const [name, setName] = useState(currentUser?.name || "");
   const [phone, setPhone] = useState(currentUser?.phone_number || "");
@@ -27,12 +27,12 @@ export default function ProfilePage() {
   }, [currentUser]);
 
   useEffect(() => {
-    if (!checkingAuth && !currentUser) {
+    if (!currentUser) {
       router.replace("/login");
     }
-  }, [checkingAuth, currentUser]);
+  }, [currentUser]);
 
-  if (checkingAuth || !currentUser) {
+  if (!currentUser) {
     return <div className="text-center mt-20 text-gray-600 dark:text-gray-300">Loading...</div>;
   }
 
@@ -54,6 +54,8 @@ export default function ProfilePage() {
       if (newPassword !== confirmPassword) {
         return setError("Password baru dan konfirmasi tidak cocok.");
       }
+
+      if (password !== currentUser.password) return setError("Password salah");
     }
 
     if (phone && !validatePhoneNumber(phone)) {
