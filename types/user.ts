@@ -6,4 +6,5 @@ export interface User {
   phone_number: string;
   email: string;
   password: string;
+  balance: number;
 }

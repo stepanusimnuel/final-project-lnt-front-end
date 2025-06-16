@@ -6,10 +6,10 @@ import { useProductContext } from "@/app/context/ProductContext";
 import { useEffect, useState } from "react";
 import ReviewComment from "../../../../components/product/ReviewComment";
 import { useCartContext } from "@/app/context/CartContext";
-import CartButton from "../../../../components/buttons/CartButton";
 import { useAuth } from "../../../../hooks/useAuth";
 import { useRouter } from "next/navigation";
 import ThemeButton from "../../../../components/buttons/ThemeButton";
+import Navbar from "../../../../components/navbar/Navbar";
 
 export default function ProductDetail() {
   const { currentUser, checkingAuth } = useAuth();
@@ -40,8 +40,8 @@ export default function ProductDetail() {
   const prevImage = () => setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
 
   return (
-    <div className=" dark:bg-gray-900 mx-auto p-10">
-      <CartButton />
+    <div className=" dark:bg-gray-900 mx-auto p-10 pt-32">
+      <Navbar balance={currentUser.balance} />
       <div className="max-w-5xl mx-auto bg-white dark:bg-gray-900 rounded-lg shadow-xl p-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="relative w-full h-64 md:h-80 bg-gray-100 dark:bg-gray-800 rounded overflow-hidden flex items-center justify-center">

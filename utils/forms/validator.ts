@@ -12,6 +12,6 @@ export function validatePassword(password: string): boolean {
   return password.length >= 6;
 }
 
-export function isLoggedIn(): boolean {
-  return localStorage.getItem("currentUser") ? true : false;
+export function validateName(name: string): boolean {
+  return name.length <= 30;
 }

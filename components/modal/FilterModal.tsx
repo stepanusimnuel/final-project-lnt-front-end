@@ -1,8 +1,8 @@
-// components/filter/FilterModal.tsx
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import DropdownFilterSelect from "../dropdowns/DropdownFilterSelect";
+import { useOutsideClick } from "../../hooks/useOutsideClick";
 
 type Props = {
   isOpen: boolean;
@@ -18,7 +18,10 @@ export default function FilterModal({ isOpen, onClose, onApply, brands, categori
   const [rating, setRating] = useState(0);
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(100000);
+  const modalRef = useRef<HTMLDivElement | null>(null);
   const stars = ["0", "1", "2", "3", "4", "5"];
+
+  useOutsideClick(modalRef, () => onClose());
 
   useEffect(() => {
     if (isOpen) {
@@ -34,7 +37,7 @@ export default function FilterModal({ isOpen, onClose, onApply, brands, categori
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md mx-4">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md mx-4" ref={modalRef}>
         <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">Filter Produk</h2>
 
         <div className="mb-4">

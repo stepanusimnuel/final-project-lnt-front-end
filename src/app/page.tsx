@@ -71,6 +71,20 @@ export default function Dashboard() {
     }
   });
 
+  const handleClearFilter = (): void => {
+    setMinRating(0);
+    setMinPrice(0);
+    setMaxPrice(Infinity);
+    setToSearch("");
+    setSelectedBrand("");
+    setSelectedCategory("");
+  };
+
+  const isFiltered = (): boolean => {
+    if (minRating != 0 || minPrice != 0 || maxPrice != Infinity || toSearch != "" || selectedBrand != "" || selectedCategory != "") return true;
+    return false;
+  };
+
   const toggleTag = (tag: string) => {
     setSelectedTags((prev) => (prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]));
   };
@@ -79,7 +93,7 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen p-6 pt-32 relative bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
-      <Navbar />
+      <Navbar balance={currentUser.balance} />
 
       <div className="flex gap-2 mb-4 flex-wrap justify-center">
         {uniqueTags.map((tag, i) => (
@@ -94,6 +108,11 @@ export default function Dashboard() {
           <button onClick={() => setIsFilterOpen(true)} className="p-2 px-4 bg-white hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white border border-gray-300 dark:border-gray-600 rounded shadow-sm">
             🔍 Filter
           </button>
+          {isFiltered() && (
+            <button onClick={handleClearFilter} className="p-2 px-4 bg-white hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white border border-gray-300 dark:border-gray-600 rounded shadow-sm">
+              Clear Filter
+            </button>
+          )}
         </div>
 
         <div className="w-full flex gap-2 sm:w-auto">

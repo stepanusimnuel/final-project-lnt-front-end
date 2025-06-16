@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useAuth } from "../../hooks/useAuth";
+import { InputField } from "./InputField";
 
 export default function LoginForm() {
   const { currentUser, checkingAuth, login } = useAuth();
@@ -43,27 +44,9 @@ export default function LoginForm() {
 
       {error && <p className="text-red-600 dark:text-red-400 text-sm text-center">{error}</p>}
 
-      <div>
-        <label className="block mb-1 font-medium text-gray-800 dark:text-gray-200">Email</label>
-        <input
-          type="email"
-          name="email"
-          value={form.email}
-          onChange={handleChange}
-          className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-sky-300 dark:focus:ring-sky-500"
-        />
-      </div>
+      <InputField label="Email" name="email" type="email" value={form.email} onChange={handleChange} />
 
-      <div>
-        <label className="block mb-1 font-medium text-gray-800 dark:text-gray-200">Password</label>
-        <input
-          type="password"
-          name="password"
-          value={form.password}
-          onChange={handleChange}
-          className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-sky-300 dark:focus:ring-sky-500"
-        />
-      </div>
+      <InputField label="Password" name="password" type="password" value={form.password} onChange={handleChange} />
 
       <div>
         <p className="text-sm text-center text-gray-600 dark:text-gray-400">

@@ -1,27 +1,18 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../../hooks/useAuth";
 import Image from "next/image";
-import { useTheme } from "@/app/context/ThemeContext";
+import { useOutsideClick } from "../../hooks/useOutsideClick";
 
 export default function DropdownProfile() {
   const { currentUser, logout } = useAuth();
-  const { theme } = useTheme();
   const router = useRouter();
   const [open, setOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
 
-  useEffect(() => {
-    function handleClickOutside(e: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  useOutsideClick(dropdownRef, () => setOpen(false));
 
   if (!currentUser) return null;
 
@@ -50,10 +41,40 @@ export default function DropdownProfile() {
             }}
             className={`block w-full px-4 py-2 text-left hover:bg-gray-300 `}
           >
-            👤 Lihat Profil
+            <div className="flex items-center gap-2">
+              <span>👤</span>
+              <span>Lihat Profil</span>
+            </div>
+          </button>
+          <button
+            onClick={() => {
+              router.push("/topup");
+              setOpen(false);
+            }}
+            className={`block w-full px-4 py-2 text-left hover:bg-gray-300 `}
+          >
+            <div className="flex items-center gap-2">
+              <span>💲</span>
+              <span> Top Up</span>
+            </div>
+          </button>
+          <button
+            onClick={() => {
+              router.push("/history");
+              setOpen(false);
+            }}
+            className={`block w-full px-4 py-2 text-left hover:bg-gray-300 `}
+          >
+            <div className="flex items-center gap-2">
+              <span>📋</span>
+              <span> Riwayat Pembelian</span>
+            </div>
           </button>
           <button onClick={logout} className={`block w-full px-4 py-2 text-left text-red-600 hover:bg-gray-300`}>
-            🚪 Logout
+            <div className="flex items-center gap-2">
+              <span>🚪</span>
+              <span> Logout</span>
+            </div>
           </button>
         </div>
       )}

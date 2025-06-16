@@ -28,6 +28,7 @@ export function useAuth() {
       phone_number,
       date_of_birth,
       picture: "",
+      balance: 0,
     };
 
     users.push(newUser);
